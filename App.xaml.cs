@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Data;
 using System.Windows;
 using CefSharp.Wpf;
+using System.IO;
 
 namespace ManualWebScraper;
 
@@ -13,9 +14,16 @@ public partial class App : Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {
-        if (Cef.IsInitialized.HasValue && Cef.IsInitialized.Value == false)
+        if (!Cef.IsInitialized.HasValue || !Cef.IsInitialized.Value)
         {
-            var settings = new CefSettings();
+            var folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var settings = new CefSettings
+            {
+                CachePath = Path.Combine(
+                    folder,
+                    "ManualWebScraperWPF",
+                    "cef_cache")
+            };
             Cef.Initialize(settings);
         }
 

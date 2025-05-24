@@ -3,11 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ManualWebScraper"
         xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
-        Title="MainWindow" Height="450" Width="800">
+        xmlns:local="clr-namespace:ManualWebScraper"
+        Title="Manual Web Scraper" Height="1280" Width="1600"
+        mc:Ignorable="d"
+        xmlns:vm="clr-namespace:ManualWebScraper.ViewModels"
+        d:DataContext="{d:DesignInstance Type=vm:BrowserViewModel}">
     <DockPanel>
-        <Button DockPanel.Dock="Top" Name="ScrapeButton" Click="ScrapeButton_Click" Height="30" Margin="5">Scrape</Button>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4">
+            <Button Content="◀ Back" Command="{Binding GoBackCommand}" Margin="0,0,4,0"/>
+            <Button Content="▶ Forward" Command="{Binding GoForwardCommand}" Margin="0,0,4,0"/>
+            <Button Content="⟳ Reload" Command="{Binding ReloadCommand}" />
+        </StackPanel>
         <cefSharp:ChromiumWebBrowser x:Name="Browser" Address="https://21sextury.com"/>
     </DockPanel>
 </Window>
