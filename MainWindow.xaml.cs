@@ -15,24 +15,8 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        var vm = new BrowserViewModel();
+        var vm = new BrowserViewModel { Browser = Browser };
         DataContext = vm;
-        if (DataContext is BrowserViewModel) // vm)
-        {
-            vm.Browser = Browser;
-
-            // Ensure CanExecute states are evaluated
-            Browser.LoadingStateChanged += (_, e) =>
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    //vm.GoBackCommand.NotifyCanExecuteChanged();
-                    //vm.GoForwardCommand.NotifyCanExecuteChanged();
-                    vm.RefreshNavCommands();
-                });
-            };
-
-        }
     }
 
     private async void ScrapeButton_Click(object sender, RoutedEventArgs e)

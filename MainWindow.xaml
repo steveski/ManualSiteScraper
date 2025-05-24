@@ -13,7 +13,10 @@
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4">
             <Button Content="◀ Back" Command="{Binding GoBackCommand}" Margin="0,0,4,0"/>
             <Button Content="▶ Forward" Command="{Binding GoForwardCommand}" Margin="0,0,4,0"/>
-            <Button Content="⟳ Reload" Command="{Binding ReloadCommand}" />
+            <Button Content="⟳ Reload" Command="{Binding ReloadCommand}" Margin="0,0,4,0"/>
+
+            <TextBox Width="500" Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}" Margin="8,0,4,0"/>
+            <Button Content="Go" Command="{Binding GoCommand}" />
         </StackPanel>
         <cefSharp:ChromiumWebBrowser x:Name="Browser" Address="https://21sextury.com"/>
     </DockPanel>
