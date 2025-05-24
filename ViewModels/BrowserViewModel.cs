@@ -79,15 +79,13 @@ public partial class BrowserViewModel : ObservableObject
                 });
             }
         };
+
+        if (!string.IsNullOrWhiteSpace(Url))
+        {
+            Browser.Load(Url);
+        }
     }
 
-    //public void UpdateWindowState(double x, double y, double width, double height)
-    //{
-    //    AppState.WindowX = x;
-    //    AppState.WindowY = y;
-    //    AppState.WindowWidth = width;
-    //    AppState.WindowHeight = height;
-    //}
 
     private static string SavePath => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
