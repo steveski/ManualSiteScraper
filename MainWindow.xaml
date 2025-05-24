@@ -56,7 +56,7 @@
                     <TextBox Width="500" Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}" Margin="8,0,4,0"/>
                     <Button Content="Go" Command="{Binding GoCommand}" />
                 </StackPanel>
-                <cefSharp:ChromiumWebBrowser x:Name="Browser" DockPanel.Dock="Bottom" />
+                <cefSharp:ChromiumWebBrowser x:Name="Browser" DockPanel.Dock="Bottom" Address="{Binding Url}" />
             </DockPanel>
         </Grid>
     </DockPanel>

@@ -9,21 +9,14 @@ namespace ManualWebScraper;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private readonly BrowserViewModel vm;
+    private readonly BrowserViewModel _vm;
 
-    public MainWindow()
+    public MainWindow(BrowserViewModel vm)
     {
         InitializeComponent();
-
-        var loadedState = BrowserViewModel.LoadAppStateFromDisk();
-        vm = new BrowserViewModel(loadedState); // { Browser = Browser };
+        _vm = vm;
         DataContext = vm;
-
         vm.AttachBrowser(Browser);
-
-        //LocationChanged += (_, _) => vm.UpdateWindowState(new Point(Left, Top), vm.AppState.WindowWidth, vm.AppState.WindowHeight);
-        //SizeChanged += (_, _) => vm.UpdateWindowState(vm.AppState.WindowPosition, vm.AppState.WindowWidth, vm.AppState.WindowHeight);
-        Closing += (_, _) => vm.SaveAppState();
 
     }
 
