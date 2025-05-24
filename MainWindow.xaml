@@ -5,10 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         xmlns:local="clr-namespace:ManualWebScraper"
-        Title="Manual Web Scraper" Height="1280" Width="1600"
+        Title="Manual Web Scraper"
         mc:Ignorable="d"
         xmlns:vm="clr-namespace:ManualWebScraper.ViewModels"
-        d:DataContext="{d:DesignInstance Type=vm:BrowserViewModel}">
+        d:DataContext="{d:DesignInstance Type=vm:BrowserViewModel}"
+        Width="{Binding AppState.WindowSize.Width}"
+        Height="{Binding AppState.WindowSize.Height}"
+        Left="{Binding AppState.WindowPosition.X}"
+        Top="{Binding AppState.WindowPosition.Y}">
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4">
             <Button Content="◀ Back" Command="{Binding GoBackCommand}" Margin="0,0,4,0"/>

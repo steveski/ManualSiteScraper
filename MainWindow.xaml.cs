@@ -1,7 +1,5 @@
 ﻿using System.Windows;
 using CefSharp;
-using CefSharp.Wpf;
-using CefSharp.DevTools;
 using ManualWebScraper.ViewModels;
 
 namespace ManualWebScraper;
@@ -11,12 +9,39 @@ namespace ManualWebScraper;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private readonly BrowserViewModel vm;
+
     public MainWindow()
     {
         InitializeComponent();
 
-        var vm = new BrowserViewModel { Browser = Browser };
+        vm = new BrowserViewModel { Browser = Browser };
         DataContext = vm;
+
+        vm.AttachBrowser(Browser);
+
+        LocationChanged += (_, _) => vm.UpdateWindowState(new Point(Left, Top), vm.AppState.WindowSize);
+        SizeChanged += (_, _) => vm.UpdateWindowState(vm.AppState.WindowPosition, new Size(ActualWidth, ActualHeight));
+        Closing += (_, _) => vm.SaveAppState();
+
+    }
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+
+        // Manually apply saved window size and position
+        if (vm.AppState.WindowSize.Width > 0 && vm.AppState.WindowSize.Height > 0)
+        {
+            Width = vm.AppState.WindowSize.Width;
+            Height = vm.AppState.WindowSize.Height;
+        }
+
+        if (vm.AppState.WindowPosition.X >= 0 && vm.AppState.WindowPosition.Y >= 0)
+        {
+            Left = vm.AppState.WindowPosition.X;
+            Top = vm.AppState.WindowPosition.Y;
+        }
     }
 
     private async void ScrapeButton_Click(object sender, RoutedEventArgs e)

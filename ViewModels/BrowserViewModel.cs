@@ -2,7 +2,10 @@
 using CefSharp.Wpf;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.IO;
 using System.Security.Policy;
+using System.Text.Json;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace ManualWebScraper.ViewModels
@@ -15,6 +18,10 @@ namespace ManualWebScraper.ViewModels
 
         public BrowserViewModel()
         {
+            LoadAppState();
+
+            Url = AppState.LastVisitedUrl ?? Url;
+
             _navPollTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(200)
@@ -23,8 +30,12 @@ namespace ManualWebScraper.ViewModels
             _navPollTimer.Start();
         }
 
+
         [ObservableProperty]
-        private string url = "https://example.com";
+        private string _url = "https://example.com";
+
+        [ObservableProperty]
+        public AppStateViewModel _appState = new();
 
         [RelayCommand]
         private void Go()
@@ -51,6 +62,57 @@ namespace ManualWebScraper.ViewModels
         {
             GoBackCommand.NotifyCanExecuteChanged();
             GoForwardCommand.NotifyCanExecuteChanged();
+        }
+
+        public void AttachBrowser(ChromiumWebBrowser browser)
+        {
+            Browser = browser;
+
+            Browser.LoadingStateChanged += (_, e) =>
+            {
+                if (e.IsLoading == false)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Url = Browser.Address;
+                        AppState.LastVisitedUrl = Browser.Address;
+                    });
+                }
+            };
+        }
+
+        public void UpdateWindowState(Point position, Size size)
+        {
+            AppState.WindowPosition = position;
+            AppState.WindowSize = size;
+        }
+
+        private static string SavePath => Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "ManualWebScraper", "appstate.json");
+
+        public void SaveAppState()
+        {
+            var dir = Path.GetDirectoryName(SavePath)!;
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            File.WriteAllText(SavePath,
+                JsonSerializer.Serialize(
+                    AppState,
+                    new JsonSerializerOptions { WriteIndented = true }
+                    )
+                );
+        }
+
+        public void LoadAppState()
+        {
+            if (File.Exists(SavePath))
+            {
+                var state = JsonSerializer.Deserialize<AppStateViewModel>(File.ReadAllText(SavePath));
+                if (state != null)
+                    AppState = state;
+            }
         }
 
     }
