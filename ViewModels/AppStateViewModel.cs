@@ -9,9 +9,15 @@ public partial class AppStateViewModel : BaseViewModel
     private string? _lastVisitedUrl;
 
     [ObservableProperty]
-    private Point _windowPosition;
+    private double _windowX = 50;
 
     [ObservableProperty]
-    private Size _windowSize;
+    private double _windowY = 100;
+
+    [ObservableProperty]
+    private double _windowWidth = 300;
+
+    [ObservableProperty]
+    private double _windowHeight = 200;
 
 }

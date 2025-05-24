@@ -6,13 +6,15 @@
         xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         xmlns:local="clr-namespace:ManualWebScraper"
         Title="Manual Web Scraper"
+        WindowStartupLocation="Manual"
         mc:Ignorable="d"
         xmlns:vm="clr-namespace:ManualWebScraper.ViewModels"
         d:DataContext="{d:DesignInstance Type=vm:BrowserViewModel}"
-        Width="{Binding AppState.WindowSize.Width}"
-        Height="{Binding AppState.WindowSize.Height}"
-        Left="{Binding AppState.WindowPosition.X}"
-        Top="{Binding AppState.WindowPosition.Y}">
+        Width="{Binding AppState.WindowWidth, Mode=TwoWay}"
+        Height="{Binding AppState.WindowHeight, Mode=TwoWay}"
+        Left="{Binding AppState.WindowX, Mode=TwoWay}"
+        Top="{Binding AppState.WindowY, Mode=TwoWay}">
+
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4">
             <Button Content="◀ Back" Command="{Binding GoBackCommand}" Margin="0,0,4,0"/>
@@ -22,6 +24,10 @@
             <TextBox Width="500" Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}" Margin="8,0,4,0"/>
             <Button Content="Go" Command="{Binding GoCommand}" />
         </StackPanel>
-        <cefSharp:ChromiumWebBrowser x:Name="Browser" Address="https://21sextury.com"/>
+        <StackPanel>
+            <Label Content="{Binding AppState.WindowWidth}"/>
+            <Label Content="{Binding AppState.WindowHeight}" Margin="50 0 0 0"/>
+        </StackPanel>
+        <cefSharp:ChromiumWebBrowser x:Name="Browser" DockPanel.Dock="Bottom" />
     </DockPanel>
 </Window>
