@@ -30,8 +30,10 @@ public partial class BrowserViewModel : ObservableObject
     }
 
 
-    [ObservableProperty]
-    private string _url = "https://example.com";
+    [ObservableProperty] private string _url = "https://example.com";
+    [ObservableProperty] private string _scriptKey;
+    [ObservableProperty] private string _scriptText;
+    [ObservableProperty] private string _scriptResult;
 
     public AppStateViewModel AppState { get; set; }
 
@@ -114,6 +116,44 @@ public partial class BrowserViewModel : ObservableObject
         }
 
         return null;
+    }
+
+    [RelayCommand]
+    private async Task RunScript()
+    {
+        if (string.IsNullOrWhiteSpace(ScriptText) || Browser == null)
+            return;
+
+        var result = await Browser.EvaluateScriptAsync(ScriptText);
+        if (result.Success)
+        {
+            // Serialize the JS result to JSON for display
+            ScriptResult = JsonSerializer.Serialize(result.Result, new JsonSerializerOptions { WriteIndented = true });
+        }
+        else
+        {
+            ScriptResult = $"Error: {result.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private void ExecuteScript()
+    {
+        if (!string.IsNullOrWhiteSpace(ScriptKey))
+        {
+            BackendDispatch(ScriptKey, ScriptResult);
+        }
+    }
+
+    private void BackendDispatch(string key, string? json)
+    {
+        // Placeholder for backend handling based on key
+    }
+
+    private void RunWizard(WizardInput? input)
+    {
+        Console.WriteLine($"Running wizard with: {input?.Param1} / {input?.Param2}");
+        // Add real logic or UI here
     }
 
 }
