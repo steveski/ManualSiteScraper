@@ -3,5 +3,5 @@
 public interface IScriptResultHandler
 {
     string Key { get; }
-    void Handle(string jsonPayload);
+    Task Handle(string jsonPayload, CancellationToken ct = default);
 }

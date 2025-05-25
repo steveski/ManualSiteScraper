@@ -7,7 +7,7 @@
     ? titleEl.innerText.trim()
     : '';
 
-  const descrEl= document.querySelector('.Description');
+  const descrEl= document.querySelector('.Description-Paragraph');
   const descr= descrEl
     ? descrEl.innerText.trim()
     : '';
@@ -29,7 +29,7 @@ const actorIds = Array.from(nameLinks)
 
   return {
     title,
-    descr,
+    description: descr,
     actorIds
   };
 })()

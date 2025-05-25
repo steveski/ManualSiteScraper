@@ -2,5 +2,5 @@
 
 public interface IScriptResultsDispatcher
 {
-    void Dispatch(string key, string jsonPayload);
+    Task Dispatch(string key, string jsonPayload, CancellationToken ct = default);
 }

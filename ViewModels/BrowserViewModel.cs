@@ -104,11 +104,14 @@ public partial class BrowserViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void ExecuteScript()
+    private async Task ExecuteScript()
     {
-        if (!string.IsNullOrWhiteSpace(ScriptKey))
-            _dispatcher.Dispatch(ScriptKey, ScriptResult);
+        if (string.IsNullOrWhiteSpace(ScriptKey) || string.IsNullOrWhiteSpace(ScriptResult))
+            return;
+
+        await _dispatcher.Dispatch(ScriptKey, ScriptResult);
     }
+
     public void RefreshNavCommands()
     {
         GoBackCommand.NotifyCanExecuteChanged();

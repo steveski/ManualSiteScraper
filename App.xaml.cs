@@ -5,6 +5,8 @@ using System.IO;
 using Microsoft.Extensions.Hosting;
 using ManualWebScraper.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using ManualWebScraper.Models;
+using ManualWebScraper.ScriptHandlers;
 
 namespace ManualWebScraper;
 
@@ -37,8 +39,14 @@ public partial class App : Application
                 var appState = AppStateViewModel.Load();
                 services.AddSingleton(appState);
 
+                // Register flows
+                services.AddTransient<IScriptExecutionFlow<SaveSceneDetailsRequest>, SaveSceneDetailsFlow>();
+                services.AddTransient<IScriptExecutionFlow<SaveSceneDetailsRequest>, DoSomethingElseFlow>();
+
                 // Services
                 services.AddSingleton<IScriptResultsDispatcher, ScriptResultsDispatcher>();
+
+                services.AddSingleton<IScriptResultHandler, SaveSceneDetailsHandler>();
                 services.AddSingleton<IScriptResultHandler, ExampleHandler>();
 
                 // ViewModels
