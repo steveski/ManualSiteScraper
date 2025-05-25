@@ -33,6 +33,8 @@ public partial class AppStateViewModel : BaseViewModel
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "ManualWebScraper", "appstate.json");
 
+    public string? LastSceneFolder { get; set; }
+
     // Load persisted state or return defaults
     public static AppStateViewModel Load()
     {

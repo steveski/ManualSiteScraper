@@ -45,12 +45,14 @@ public partial class App : Application
 
                 // Services
                 services.AddSingleton<IScriptResultsDispatcher, ScriptResultsDispatcher>();
+                services.AddSingleton<IFileDialogService, FileDialogService>();
 
                 services.AddSingleton<IScriptResultHandler, SaveSceneDetailsHandler>();
                 services.AddSingleton<IScriptResultHandler, ExampleHandler>();
 
                 // ViewModels
                 services.AddTransient<BrowserViewModel>();
+
 
                 // MainWindow
                 services.AddTransient<MainWindow>();
