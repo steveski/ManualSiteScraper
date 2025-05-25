@@ -2,9 +2,7 @@
 using CefSharp.Wpf;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.IO;
-using System.Net.NetworkInformation;
-using System.Security.Policy;
+using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Threading;
@@ -24,12 +22,20 @@ public partial class BrowserViewModel : ObservableObject
     [ObservableProperty] private string _scriptText;
     [ObservableProperty] private string _scriptResult;
 
+    public ObservableCollection<ScriptPanelViewModel> Panels { get; } = new();
+
     public BrowserViewModel(IScriptResultsDispatcher dispatcher, AppStateViewModel? state = null)
     {
         _dispatcher = dispatcher;
         AppState = state ?? new AppStateViewModel();
 
         Url = AppState.LastVisitedUrl ?? Url;
+
+        // Initialise panels from state
+        foreach(var model in AppState.ScriptPanels)
+        {
+            Panels.Add(new ScriptPanelViewModel(model, this, _dispatcher));
+        }
 
         _navPollTimer = new DispatcherTimer
         {
@@ -58,6 +64,14 @@ public partial class BrowserViewModel : ObservableObject
         {
             Browser.Load(Url);
         }
+    }
+
+    [RelayCommand]
+    private void NewPanel()
+    {
+        var model = new ScriptPanelModel();
+        AppState.ScriptPanels.Add(model);
+        Panels.Add(new ScriptPanelViewModel(model, this, _dispatcher));
     }
 
     [RelayCommand(CanExecute = nameof(CanGoBack))]

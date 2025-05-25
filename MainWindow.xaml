@@ -20,30 +20,28 @@
     </Window.DataContext>-->
 
     <DockPanel>
-        <!-- Script panel on the left -->
-        <Grid DockPanel.Dock="Left" Width="300">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <StackPanel Margin="4">
-                <TextBlock Text="Script Key:"/>
-                <TextBox Text="{Binding ScriptKey, UpdateSourceTrigger=PropertyChanged}" />
-
-                <TextBlock Text="JavaScript:" Margin="0,10,0,0"/>
-                <TextBox Text="{Binding ScriptText, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="100" />
-
-                <Button Content="Run" Command="{Binding RunScriptCommand}" Margin="0,5,0,0" />
-
-                <TextBlock Text="Result:" Margin="0,10,0,0" />
-                <TextBox Text="{Binding ScriptResult}" AcceptsReturn="True" Height="100" IsReadOnly="True" />
-
-                <Button Content="Execute Backend" Command="{Binding ExecuteScriptCommand}" Margin="0,10,0,0" />
-            </StackPanel>
-        </Grid>
+        <!-- Left sidebar -->
+        <StackPanel DockPanel.Dock="Left" Width="300" Margin="4">
+            <Button Content="New..." Command="{Binding NewPanelCommand}" Margin="0,0,0,10" />
+            <ItemsControl ItemsSource="{Binding Panels}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:ScriptPanelViewModel}">
+                        <Expander Header="{Binding Name}" IsExpanded="False" Margin="0,0,0,5">
+                            <StackPanel Margin="4">
+                                <TextBlock Text="Script Key:"/>
+                                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock Text="JavaScript:" Margin="0,10,0,0"/>
+                                <TextBox Text="{Binding ScriptText, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="80"/>
+                                <Button Content="Run" Command="{Binding RunScriptCommand}" Margin="0,5,0,0"/>
+                                <TextBlock Text="Result:" Margin="0,10,0,0"/>
+                                <TextBox Text="{Binding ScriptResult}" AcceptsReturn="True" Height="80" IsReadOnly="True"/>
+                                <Button Content="Execute" Command="{Binding ExecuteBackendCommand}" Margin="0,10,0,0"/>
+                            </StackPanel>
+                        </Expander>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
 
         <!-- Main content -->
         <Grid>

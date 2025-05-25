@@ -1,14 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows;
 
 namespace ManualWebScraper.ViewModels;
 
 public partial class AppStateViewModel : BaseViewModel
 {
+    [JsonInclude]
+    public ObservableCollection<ScriptPanelModel> ScriptPanels { get; set; } = new();
+
     [ObservableProperty]
     private string? _lastVisitedUrl;
 

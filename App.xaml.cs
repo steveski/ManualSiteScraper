@@ -33,10 +33,11 @@ public partial class App : Application
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices((_, services) =>
             {
+                // Load & register AppState
                 var appState = AppStateViewModel.Load();
-
-                // AppState singleton
                 services.AddSingleton(appState);
+
+                // Services
                 services.AddSingleton<IScriptResultsDispatcher, ScriptResultsDispatcher>();
                 services.AddSingleton<IScriptResultHandler, ExampleHandler>();
 
