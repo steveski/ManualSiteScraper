@@ -8,11 +8,15 @@ public interface IFileDialogService
     Task<string[]> ShowOpenFileDialog(string title,
                                            string? initialDirectory = null,
                                            (string filterName, string? filterPattern)[] filters = null,
-                                           bool multiSelect = false, CancellationToken ct = default);
+                                           bool multiSelect = false);
 
     Task<string?> ShowSaveFileDialog(string title,
         string initialDirectory = null,
         string defaultFileName = null,
-        (string filterName, string filterPattern)[] filters = null, CancellationToken ct = default);
+        (string filterName, string filterPattern)[] filters = null);
+
+    Task<string?> ShowSelectFolderDialogAsync(
+        string title,
+        string initialDirectory = null);
 
 }

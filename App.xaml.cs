@@ -50,6 +50,8 @@ public partial class App : Application
                 services.AddSingleton<IScriptResultHandler, SaveSceneDetailsHandler>();
                 services.AddSingleton<IScriptResultHandler, ExampleHandler>();
 
+                services.AddSingleton<DownloadInterceptor>();
+
                 // ViewModels
                 services.AddTransient<BrowserViewModel>();
 

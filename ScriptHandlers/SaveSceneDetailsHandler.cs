@@ -17,16 +17,24 @@ public class SaveSceneDetailsHandler : IScriptResultHandler
 
     public async Task Handle(string jsonPayload, CancellationToken ct = default)
     {
-        var body = JsonSerializer.Deserialize<SaveSceneDetailsRequest>(
-            jsonPayload,
-            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }
-            )
-                   ?? throw new InvalidOperationException("Invalid payload for save-scene-details");
-
-        // Execute each flow in order
-        foreach (var flow in _flows)
+        try
         {
-            await flow.Execute(body, ct);
+            var body = JsonSerializer.Deserialize<SaveSceneDetailsRequest>(
+               jsonPayload,
+               new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }
+               )
+                      ?? throw new InvalidOperationException("Invalid payload for save-scene-details");
+
+            // Execute each flow in order
+            foreach (var flow in _flows)
+            {
+                await flow.Execute(body, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+
+            throw;
         }
     }
 

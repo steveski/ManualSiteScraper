@@ -13,24 +13,28 @@ public class SaveSceneDetailsFlow(IFileDialogService fileDialog, AppStateViewMod
 
     public async Task Execute(SaveSceneDetailsRequest body, CancellationToken ct = default)
     {
-        var filePath = await _fileDialog
-            .ShowSaveFileDialog(
+        var path = await _fileDialog
+            .ShowSelectFolderDialogAsync(
                 title: "Enter a scene file to save",
-                initialDirectory: appState.LastSceneFolder ?? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                defaultFileName: "sceneInfo.json",
-                filters: [("JSON files", "*.json"), ("All files", "*")]);
+                initialDirectory: appState.LastSceneFolder ?? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 
-        if (filePath is null || filePath.Length == 0)
+        if (string.IsNullOrWhiteSpace(path))
         {
             return;
         }
 
+        var sceneFolder = Path.Combine(path, body.SceneDate);
+        if (!Directory.Exists(sceneFolder))
+        {
+            Directory.CreateDirectory(sceneFolder);
+        }
+
         await File.WriteAllTextAsync(
-            filePath,
-            JsonSerializer.Serialize(body, new JsonSerializerOptions() {  WriteIndented = true}),
-            ct);
+            Path.Combine(sceneFolder, "sceneInfo.json"),
+            JsonSerializer.Serialize(body, new JsonSerializerOptions() {  WriteIndented = true})
+            );
         
-        appState.LastSceneFolder = filePath;
+        appState.LastSceneFolder = path;
 
     }
 }

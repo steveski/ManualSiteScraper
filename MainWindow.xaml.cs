@@ -11,12 +11,14 @@ public partial class MainWindow : Window
 {
     private readonly BrowserViewModel _vm;
 
-    public MainWindow(BrowserViewModel vm)
+    public MainWindow(BrowserViewModel vm, DownloadInterceptor dlInterceptor)
     {
         InitializeComponent();
         _vm = vm;
         DataContext = vm;
         vm.AttachBrowser(Browser);
+
+        Browser.DownloadHandler = dlInterceptor;
 
     }
 
