@@ -1,65 +1,4 @@
 ﻿
-async function DetermineFileDetails() {
-  // 1) Locate the download link (adjust selector as needed)
-  const dl = document.querySelector('a.PhotosetGalleryInfo-Download-Link');
-  if (!dl) {
-    return { error: 'Download link not found' };
-  }
-  
-  const url = dl.href;
-  
-  // 2) Derive filename from the URL as fallback
-  let filename = decodeURIComponent(url.split('/').pop().split('?')[0]);
-  
-  // 3) Try HEAD request to get a real filename from headers
-  try {
-    const head = await fetch(url, { method: 'HEAD' });
-    const cd = head.headers.get('content-disposition');
-    if (cd) {
-      const m = cd.match(/filename\*?=\s*(?:UTF-8'')?['"]?([^;"']+)/i);
-      if (m && m[1]) {
-        filename = decodeURIComponent(m[1]);
-      }
-    }
-  } catch (e) {
-    // network error or CORS—ignore and use URL fallback
-  }
-  
-  // 4) Return the info without triggering a download
-  return { url, filename };
-}
-
-async function GetGalleries() {
-  // 1) find and click the “Pictures” link
-  const picAnchor = Array.from(document.querySelectorAll('a[href*="/en/picture/"]'))
-    .find(a => a.querySelector('span.Text')?.textContent.trim() === 'Pictures');
-  if (!picAnchor) {
-    return { error: 'Pictures link not found' };
-  }
-  picAnchor.click();
-
-  // 2) wait for the pictures page to render
-  await new Promise(r => setTimeout(r, 1500));
-
-  // 3) check for the “no screenshots” message
-  const contentDiv = document.querySelector('div.content');
-  const hasScreens = contentDiv
-    ? contentDiv.textContent.includes('There are no screenshots for this scene.')
-    : false;
-
-  if(hasScreens) {
-    await DetermineFileDetails();
-    /// HERE IS WHERE THE DOWNLOAD LINK AND FILE NAME WILL BE PICKED UP BY THE DOWNLOADINTERCEPTOR
-  }
-
-  // 4) navigate back
-  history.back();
-  await new Promise(r => setTimeout(r, 1000));
-
-  
-}
-
-
 async function GetDownloadLinks () {
   // 1) Find and click the Download button
   const download = document.querySelector('div.download .ScenePlayerHeaderPlus-IconItem');
@@ -129,6 +68,7 @@ async function GetDownloadLinks () {
 
   const links = await GetDownloadLinks();
 
+
   return {
     title,
     description: descr,
@@ -140,6 +80,76 @@ async function GetDownloadLinks () {
     links
   };
 })()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function DetermineFileDetails() {
+    const dl = document.querySelector('a.hotosetGalleryInfo-Download-Link');
+    if (!dl) return { error: 'not found' };
+
+    // trigger CEF download (this will hit your interceptor)
+    dl.click(); 
+
+    // now CEF will fire OnBeforeDownload with the real URL & filename
+    return { triggered: true };
+}
+
+async function GetGalleries() {
+  // 1) find and click the “Pictures” link
+  const picAnchor = Array.from(document.querySelectorAll('a[href*="/en/picture/"]'))
+    .find(a => a.querySelector('span.Text')?.textContent.trim() === 'Pictures');
+  if (!picAnchor) {
+    return { error: 'Pictures link not found' };
+  }
+  picAnchor.click();
+
+  // 2) wait for the pictures page to render
+  await new Promise(r => setTimeout(r, 1500));
+
+  // 3) check for the “no screenshots” message
+  const contentDiv = document.querySelector('div.content');
+  const hasScreens = contentDiv
+    ? contentDiv.textContent.includes('There are no screenshots for this scene.')
+    : false;
+
+  if(hasScreens) {
+    await DetermineFileDetails();
+    /// HERE IS WHERE THE DOWNLOAD LINK AND FILE NAME WILL BE PICKED UP BY THE DOWNLOADINTERCEPTOR
+  }
+
+  // 4) navigate back
+  history.back();
+  await new Promise(r => setTimeout(r, 1000));
+
+  
+}
+
+
+
 
 
 

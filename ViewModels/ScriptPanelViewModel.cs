@@ -49,41 +49,44 @@ public partial class ScriptPanelViewModel : ObservableObject
         if (string.IsNullOrWhiteSpace(ScriptText) || _browserVm.Browser == null)
             return;
 
-        // 1) reset & enter capture-only mode
-        _interceptor.PrepareCapture();
+        // 1) prepare interceptor to only capture, not actually download
+        _interceptor.CaptureOnly = true;
+        _interceptor.LastDownloadUrl = null;
+        _interceptor.LastDownloadFilename = null;
 
-        // 2) run the user’s JS (which must click the download link)
+        // 2) run the user's JS
         var eval = await _browserVm.Browser.EvaluateScriptAsync(ScriptText);
         if (!eval.Success)
         {
+            // JS threw or couldn’t run
             ScriptResult = JsonSerializer.Serialize(
                 new { error = eval.Message },
                 new JsonSerializerOptions { WriteIndented = true });
             return;
         }
 
-        // 3) await the interceptor seeing the download (up to 3 sec)
-        bool sawDownload = await _interceptor.WaitForDownloadAsync(TimeSpan.FromSeconds(3));
+        // 3) give the interceptor a moment to fire OnBeforeDownload
+        await Task.Delay(500);
 
-        // 4) merge the original JS result
+        // 4) take the raw JS result (usually a Dictionary<string,object>)
+        //    and merge in galleryUrl/galleryFilename
         var combined = new Dictionary<string, object>();
+
         if (eval.Result is IDictionary<string, object> dict)
-            foreach (var kv in dict) combined[kv.Key] = kv.Value!;
+        {
+            foreach (var kv in dict)
+                combined[kv.Key] = kv.Value!;
+        }
         else
+        {
+            // in case the JS returned something else (string/number/array)
             combined["jsResult"] = eval.Result!;
-
-        // 5) tack on the captured URL/filename (or an error)
-        if (sawDownload)
-        {
-            combined["galleryUrl"] = _interceptor.LastDownloadUrl!;
-            combined["galleryFilename"] = _interceptor.LastDownloadFilename!;
-        }
-        else
-        {
-            combined["galleryError"] = "download link wasn’t triggered or timed out";
         }
 
-        // 6) show it
+        //combined["galleryUrl"] = _interceptor.LastDownloadUrl;
+        //combined["galleryFilename"] = _interceptor.LastDownloadFilename;
+
+        // 5) re-serialize and display in the same ScriptResult box
         ScriptResult = JsonSerializer.Serialize(
             combined,
             new JsonSerializerOptions { WriteIndented = true });
