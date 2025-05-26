@@ -4,6 +4,7 @@ using ManualWebScraper.ViewModels;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace ManualWebScraper.ScriptHandlers;
 
@@ -23,7 +24,17 @@ public class SaveSceneDetailsFlow(IFileDialogService fileDialog, AppStateViewMod
             return;
         }
 
-        var sceneFolder = Path.Combine(path, body.SceneDate);
+        string year = "";
+        string month ="";
+
+        var m = Regex.Match(body.SceneDate, @"^(?<year>\d{4})-(?<month>\d{2})-\d{2}$");
+        if (m.Success)
+        {
+            year = m.Groups["year"].Value;  // "2003"
+            month = m.Groups["month"].Value; // "01"
+        }
+
+        var sceneFolder = Path.Combine(path, year, month, body.SceneDate);
         if (!Directory.Exists(sceneFolder))
         {
             Directory.CreateDirectory(sceneFolder);
